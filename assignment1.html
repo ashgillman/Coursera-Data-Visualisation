@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Data Visualisation Assignment 1</title>
+<!-- 2015-08-03 Mon 01:36 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Ashley Gillman" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="./org-style.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Data Visualisation Assignment 1</h1>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> The Tools</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This assignment was completed using R, and the R libraries ggplot2,
+reshape2, grid, and maptools. The assigment has further been completed
+as a <a href="https://en.wikipedia.org/wiki/Literate_programming">literate programming</a> exercise using <a href="http://orgmode.org/">org mode</a>.
+.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Understanding and Preparing the Data</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The first step in creating this visualisation was understanding the data. This was achieved by first loading the data into the workspace, and calling the <code>head()</code> function, which allows the first few lines of the data to be previewed.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">data <span style="color: #FF80F4;">&lt;-</span> read.csv(<span style="color: #EEDC82;">'./ExcelFormattedGISTEMPData2CSV.csv'</span>)
+head(data)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Data Sample</caption>
+
+<colgroup>
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="right">Year</th>
+<th scope="col" class="right">Glob</th>
+<th scope="col" class="right">NHem</th>
+<th scope="col" class="right">SHem</th>
+<th scope="col" class="right">X24N.90N</th>
+<th scope="col" class="right">X24S.24N</th>
+<th scope="col" class="right">X90S.24S</th>
+<th scope="col" class="right">X64N.90N</th>
+<th scope="col" class="right">X44N.64N</th>
+<th scope="col" class="right">X24N.44N</th>
+<th scope="col" class="right">EQU.24N</th>
+<th scope="col" class="right">X24S.EQU</th>
+<th scope="col" class="right">X44S.24S</th>
+<th scope="col" class="right">X64S.44S</th>
+<th scope="col" class="right">X90S.64S</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">1880</td>
+<td class="right">-19</td>
+<td class="right">-33</td>
+<td class="right">-5</td>
+<td class="right">-38</td>
+<td class="right">-16</td>
+<td class="right">-5</td>
+<td class="right">-89</td>
+<td class="right">-54</td>
+<td class="right">-22</td>
+<td class="right">-26</td>
+<td class="right">-5</td>
+<td class="right">-2</td>
+<td class="right">-8</td>
+<td class="right">39</td>
+</tr>
+
+<tr>
+<td class="right">1881</td>
+<td class="right">-10</td>
+<td class="right">-18</td>
+<td class="right">-2</td>
+<td class="right">-27</td>
+<td class="right">-2</td>
+<td class="right">-5</td>
+<td class="right">-54</td>
+<td class="right">-40</td>
+<td class="right">-14</td>
+<td class="right">-5</td>
+<td class="right">2</td>
+<td class="right">-6</td>
+<td class="right">-3</td>
+<td class="right">37</td>
+</tr>
+
+<tr>
+<td class="right">1882</td>
+<td class="right">-9</td>
+<td class="right">-17</td>
+<td class="right">-1</td>
+<td class="right">-21</td>
+<td class="right">-10</td>
+<td class="right">4</td>
+<td class="right">-125</td>
+<td class="right">-20</td>
+<td class="right">-3</td>
+<td class="right">-12</td>
+<td class="right">-8</td>
+<td class="right">3</td>
+<td class="right">8</td>
+<td class="right">42</td>
+</tr>
+
+<tr>
+<td class="right">1883</td>
+<td class="right">-19</td>
+<td class="right">-30</td>
+<td class="right">-8</td>
+<td class="right">-34</td>
+<td class="right">-22</td>
+<td class="right">-2</td>
+<td class="right">-28</td>
+<td class="right">-57</td>
+<td class="right">-20</td>
+<td class="right">-25</td>
+<td class="right">-19</td>
+<td class="right">-1</td>
+<td class="right">0</td>
+<td class="right">37</td>
+</tr>
+
+<tr>
+<td class="right">1884</td>
+<td class="right">-27</td>
+<td class="right">-42</td>
+<td class="right">-12</td>
+<td class="right">-56</td>
+<td class="right">-17</td>
+<td class="right">-11</td>
+<td class="right">-127</td>
+<td class="right">-58</td>
+<td class="right">-41</td>
+<td class="right">-21</td>
+<td class="right">-14</td>
+<td class="right">-15</td>
+<td class="right">-5</td>
+<td class="right">40</td>
+</tr>
+
+<tr>
+<td class="right">1885</td>
+<td class="right">-31</td>
+<td class="right">-41</td>
+<td class="right">-21</td>
+<td class="right">-61</td>
+<td class="right">-17</td>
+<td class="right">-20</td>
+<td class="right">-119</td>
+<td class="right">-70</td>
+<td class="right">-43</td>
+<td class="right">-11</td>
+<td class="right">-23</td>
+<td class="right">-27</td>
+<td class="right">-7</td>
+<td class="right">38</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+So we have time-series data, reported annually. The first column represents the time dimension, and other columns represent average temperatures accross various latitude bands. Actually what are those numbers? Inspection of <a href="http://data.giss.nasa.gov/gistemp/tabledata_v3/GLB.Ts+dSST.txt">this accompanying data file</a> shows that these actually represent the difference in hundredths of a degree. Let's convert this into actual degrees celcius to make it a little easier to understand.
+Also, something has gone wrong with the formatting of the titles. We will fix this up also.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">data[, 2:15] <span style="color: #FF80F4;">&lt;-</span> data[, 2:15] / 100                          <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">scale temperatures</span>
+names(data) <span style="color: #FF80F4;">&lt;-</span> gsub(<span style="color: #EEDC82;">'[.]'</span>, <span style="color: #EEDC82;">'-'</span>, gsub(<span style="color: #EEDC82;">'X'</span>, <span style="color: #EEDC82;">''</span>, names(data))) <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">replace '.' with '-' and remove X's</span>
+head(data)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="right">Year</th>
+<th scope="col" class="right">Glob</th>
+<th scope="col" class="right">NHem</th>
+<th scope="col" class="right">SHem</th>
+<th scope="col" class="right">24N-90N</th>
+<th scope="col" class="right">24S-24N</th>
+<th scope="col" class="right">90S-24S</th>
+<th scope="col" class="right">64N-90N</th>
+<th scope="col" class="right">44N-64N</th>
+<th scope="col" class="right">24N-44N</th>
+<th scope="col" class="right">EQU-24N</th>
+<th scope="col" class="right">24S-EQU</th>
+<th scope="col" class="right">44S-24S</th>
+<th scope="col" class="right">64S-44S</th>
+<th scope="col" class="right">90S-64S</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">1880</td>
+<td class="right">13.81</td>
+<td class="right">13.67</td>
+<td class="right">13.95</td>
+<td class="right">13.62</td>
+<td class="right">13.84</td>
+<td class="right">13.95</td>
+<td class="right">13.11</td>
+<td class="right">13.46</td>
+<td class="right">13.78</td>
+<td class="right">13.74</td>
+<td class="right">13.95</td>
+<td class="right">13.98</td>
+<td class="right">13.92</td>
+<td class="right">14.39</td>
+</tr>
+
+<tr>
+<td class="right">1881</td>
+<td class="right">13.9</td>
+<td class="right">13.82</td>
+<td class="right">13.98</td>
+<td class="right">13.73</td>
+<td class="right">13.98</td>
+<td class="right">13.95</td>
+<td class="right">13.46</td>
+<td class="right">13.6</td>
+<td class="right">13.86</td>
+<td class="right">13.95</td>
+<td class="right">14.02</td>
+<td class="right">13.94</td>
+<td class="right">13.97</td>
+<td class="right">14.37</td>
+</tr>
+
+<tr>
+<td class="right">1882</td>
+<td class="right">13.91</td>
+<td class="right">13.83</td>
+<td class="right">13.99</td>
+<td class="right">13.79</td>
+<td class="right">13.9</td>
+<td class="right">14.04</td>
+<td class="right">12.75</td>
+<td class="right">13.8</td>
+<td class="right">13.97</td>
+<td class="right">13.88</td>
+<td class="right">13.92</td>
+<td class="right">14.03</td>
+<td class="right">14.08</td>
+<td class="right">14.42</td>
+</tr>
+
+<tr>
+<td class="right">1883</td>
+<td class="right">13.81</td>
+<td class="right">13.7</td>
+<td class="right">13.92</td>
+<td class="right">13.66</td>
+<td class="right">13.78</td>
+<td class="right">13.98</td>
+<td class="right">13.72</td>
+<td class="right">13.43</td>
+<td class="right">13.8</td>
+<td class="right">13.75</td>
+<td class="right">13.81</td>
+<td class="right">13.99</td>
+<td class="right">14</td>
+<td class="right">14.37</td>
+</tr>
+
+<tr>
+<td class="right">1884</td>
+<td class="right">13.73</td>
+<td class="right">13.58</td>
+<td class="right">13.88</td>
+<td class="right">13.44</td>
+<td class="right">13.83</td>
+<td class="right">13.89</td>
+<td class="right">12.73</td>
+<td class="right">13.42</td>
+<td class="right">13.59</td>
+<td class="right">13.79</td>
+<td class="right">13.86</td>
+<td class="right">13.85</td>
+<td class="right">13.95</td>
+<td class="right">14.4</td>
+</tr>
+
+<tr>
+<td class="right">1885</td>
+<td class="right">13.69</td>
+<td class="right">13.59</td>
+<td class="right">13.79</td>
+<td class="right">13.39</td>
+<td class="right">13.83</td>
+<td class="right">13.8</td>
+<td class="right">12.81</td>
+<td class="right">13.3</td>
+<td class="right">13.57</td>
+<td class="right">13.89</td>
+<td class="right">13.77</td>
+<td class="right">13.73</td>
+<td class="right">13.93</td>
+<td class="right">14.38</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Much better.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Visualising</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+So we esentially have three dimensions to the data:
+</p>
+<ul class="org-ul">
+<li>Time: this is given in years, and therefore of a <i>discrete quantitative</i> type.
+</li>
+<li>Latitude band: this is a little bit more complex of a field, but would fall under the <i>ordinal</i> data type as an order can be given, but there are not event distances between them.
+<ul class="org-ul">
+<li>We could also break this dimension down into two continuous
+fields: the minimum and maximum of each latitude band.
+</li>
+</ul>
+</li>
+<li>Temperature: a continuous field.
+</li>
+</ul>
+
+<p>
+So we should choose carefully a visualisation technique to best
+display this data, keeping in mind the best ways to show each of the
+types of data required. Since position is the strongest indicator for
+a quantitative field, it would be ideal to assign our x and y axes to
+time and temperature.
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Line Plot</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+One obvious choice to plot this data would be to use a line chart with the independent time variable on the x-axis, and the dependent temperature variable on the y-axis. A colour scale would be shown to represent the latitude, and separate plots rendered using each of the following lattitude groups:
+</p>
+<ul class="org-ul">
+<li>Global
+</li>
+<li>Northern and Southern Hemispheres
+</li>
+<li>24<sup>o</sup>N - 90<sup>o</sup>N, 24<sup>o</sup>S - 24<sup>o</sup>N, 90<sup>o</sup>S - 24<sup>o</sup>S
+</li>
+<li>64<sup>o</sup>N - 90<sup>o</sup>N, 44<sup>o</sup>N - 64<sup>o</sup>N, EQU - 24<sup>o</sup>N, 24<sup>o</sup>S - EQU, 44<sup>o</sup>S - 24<sup>o</sup>S, 64<sup>o</sup>S - 44<sup>o</sup>S, 90<sup>o</sup>S - 64<sup>o</sup>S
+</li>
+</ul>
+<p>
+This representation has the advantage of using position to indicate the value of the quantitative fields. It also leverages a well-established convention of having time-series data represented with time on the x-axis.
+</p>
+
+<p>
+The following sections outline the basics of producing such plots for
+each latitude group.
+</p>
+</div>
+
+<div id="outline-container-sec-3-1-1" class="outline-4">
+<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> Global Temperature History</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+
+<pre class="src src-R">p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=data, aes(x=Year, y=Glob)) +
+  geom_line() +
+  ylab(<span style="color: #EEDC82;">"Global Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Global Average Temperature Difference History"</span>) +
+  theme_bw()
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-1.png" alt="line-1.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3-1-2" class="outline-4">
+<h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> Temperature History by Hemisphere</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<div class="org-src-container">
+
+<pre class="src src-R">hemisphere_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 3, 4)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=hemisphere_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line() +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Hemisphere"</span>) +
+  scale_colour_hue() +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-2.png" alt="line-2.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3-1-3" class="outline-4">
+<h4 id="sec-3-1-3"><span class="section-number-4">3.1.3</span> Temperature History by Latitude</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+
+<pre class="src src-R">lat3_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 5, 6, 7)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=lat3_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line() +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Latitude Band"</span>) +
+  scale_colour_hue() +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-3.png" alt="line-3.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-R">lat8_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 8, 9, 10, 11, 12, 13, 14, 15)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=lat8_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line() +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Latitude Band"</span>) +
+  scale_colour_hue() +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-8.png" alt="line-8.png" />
+</p>
+</div>
+
+<p>
+It would appear that dividing latitudes into 8 groups is too many. The
+colours become "cluttered", and become difficult to distinguish. A
+possible solutions is to use a different colour scheme, taken from
+<a href="http://colorbrewer2.org/">Color Brewer</a>, and to slightly increase the line weight.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">lat8_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 8, 9, 10, 11, 12, 13, 14, 15)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=lat8_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line(size=0.8) +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Latitude Band"</span>) +
+  scale_color_brewer(palette=<span style="color: #EEDC82;">"Set1"</span>) +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-8-cb.png" alt="line-8-cb.png" />
+</p>
+</div>
+
+<p>
+However, even this is still difficult to read, and the ordering
+between latitude bands is lost. Another solution is to use a defined
+colour range to represent latitude. Let's use blue-to-red to represent
+the southern hemisphere, and red-to-green to represent the northern hemisphere.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">lat8_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 8, 9, 10, 11, 12, 13, 14, 15)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+colours <span style="color: #FF80F4;">&lt;-</span> scales::gradient_n_pal(c(<span style="color: #EEDC82;">"green"</span>, <span style="color: #EEDC82;">"red"</span>, <span style="color: #EEDC82;">"blue"</span>), space=<span style="color: #EEDC82;">"Lab"</span>)(seq(0,1,length.out=8))
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=lat8_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line(size=0.8) +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Latitude Band"</span>) +
+  scale_color_manual(values=colours) +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-8-blrdgn.png" alt="line-8-blrdgn.png" />
+</p>
+</div>
+
+<p>
+We are pushing the boundaries a little here, but this looks to be the
+best solution. It is a little difficult to tell between specific
+latitude bands, but we can roughly tell the latitude we are looking
+at.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Bringing Context to the Legend</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Although the legend technically gives the reader all the information
+about the latitude band of each temperature average, it is quite
+difficult to interpret what each colour actually means. This can be
+rectified by showing a physical map, highlighting with the plot colour
+the regions over which the temperature is averaged.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">n <span style="color: #FF80F4;">&lt;-</span> 3
+colours <span style="color: #FF80F4;">&lt;-</span> scales::gradient_n_pal(c(<span style="color: #EEDC82;">"green"</span>, <span style="color: #EEDC82;">"red"</span>, <span style="color: #EEDC82;">"blue"</span>), space=<span style="color: #EEDC82;">"Lab"</span>)(seq(0,1,length.out=n))
+lat_limits <span style="color: #FF80F4;">&lt;-</span> c(90, 24, -24, -90)
+lat_range <span style="color: #FF80F4;">&lt;-</span> data.frame(upper=head(lat_limits, n), lower=tail(lat_limits, n))
+lat3_data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, 5, 6, 7)], id=<span style="color: #EEDC82;">"Year"</span>,
+                        value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+p <span style="color: #FF80F4;">&lt;-</span> ggplot(data=lat3_data, aes(x=Year, y=Temperature, color=Latitude)) +
+  geom_line(size=0.8) +
+  ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+  ggtitle(<span style="color: #EEDC82;">"Average Temperature Difference History by Latitude Band"</span>) +
+  scale_colour_manual(values=colours) +
+  theme_bw() +
+  theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+print(p)
+
+legend <span style="color: #FF80F4;">&lt;-</span> ggplot() +
+  geom_polygon(data=wrld_simpl, aes(x=long, y=lat, group=group)) +
+  geom_rect(data=lat_range, aes(ymin=lower, ymax=upper,
+                                fill=as.factor(rev(lower))), xmin=-180, xmax=180, alpha=0.5) +
+  coord_cartesian(xlim=c(-180,180), ylim=c(-90,90)) + 
+  scale_x_continuous(breaks=seq(-180,180,20)) + 
+  scale_y_continuous(breaks=seq(-90,90,10)) +
+  theme(axis.line=element_blank(),
+      axis.text.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks=element_blank(),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+      legend.position=<span style="color: #EEDC82;">"none"</span>,
+      panel.background=element_blank(),
+      panel.border=element_blank(),
+      panel.grid.major=element_blank(),
+      panel.grid.minor=element_blank(),
+      plot.background=element_blank()) +
+  scale_fill_manual(values=colours)
+print(legend, vp=viewport(0.2, 0.8, 0.3, 0.3))
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-3_globe.png" alt="line-3_globe.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Putting it all together</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Finally, taking what we have learnt, we can plot the charts for each
+set of latitude bands above one-another in order to achieve a
+heirachical view of latitudal average temperatures.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #A6E22E;">main.plot</span> <span style="color: #FF80F4;">&lt;-</span> <span style="color: #F92672;">function</span>(columns, lat.limits) {
+    n <span style="color: #FF80F4;">&lt;-</span> length(columns)
+    colours <span style="color: #FF80F4;">&lt;-</span> scales::gradient_n_pal(c(<span style="color: #EEDC82;">"green"</span>, <span style="color: #EEDC82;">"red"</span>, <span style="color: #EEDC82;">"blue"</span>), space=<span style="color: #EEDC82;">"Lab"</span>)(seq(0,1,length.out=n))
+    lat.range <span style="color: #FF80F4;">&lt;-</span> data.frame(upper=head(lat.limits, n), lower=tail(lat.limits, n))
+    this.data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, columns)], id=<span style="color: #EEDC82;">"Year"</span>,
+                            value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+    ggplot(data=this.data, aes(x=Year, y=Temperature, color=Latitude)) +
+      geom_line(size=0.8) +
+      geom_line(data=data[, c(1, 2)], aes(y=Glob), color=<span style="color: #EEDC82;">"black"</span>, size=0.9, linetype=<span style="color: #EEDC82;">"dashed"</span>) +
+      ylab(<span style="color: #EEDC82;">"Average Temperature Difference"</span>) +
+      scale_colour_manual(values=colours) +
+      theme_bw() +
+      theme(legend.position=<span style="color: #EEDC82;">"bottom"</span>)
+}
+
+<span style="color: #A6E22E;">leg.plot</span> <span style="color: #FF80F4;">&lt;-</span> <span style="color: #F92672;">function</span>(columns, lat.limits) {
+    n <span style="color: #FF80F4;">&lt;-</span> length(columns)
+    colours <span style="color: #FF80F4;">&lt;-</span> scales::gradient_n_pal(c(<span style="color: #EEDC82;">"green"</span>, <span style="color: #EEDC82;">"red"</span>, <span style="color: #EEDC82;">"blue"</span>), space=<span style="color: #EEDC82;">"Lab"</span>)(seq(0,1,length.out=n))
+    lat.range <span style="color: #FF80F4;">&lt;-</span> data.frame(upper=head(lat.limits, n), lower=tail(lat.limits, n))
+    this.data <span style="color: #FF80F4;">&lt;-</span> melt(data[, c(1, columns)], id=<span style="color: #EEDC82;">"Year"</span>,
+                            value.name=<span style="color: #EEDC82;">"Temperature"</span>, variable.name=<span style="color: #EEDC82;">"Latitude"</span>)
+    ggplot() +
+      geom_polygon(data=wrld_simpl, aes(x=long, y=lat, group=group)) +
+      geom_rect(data=lat.range, aes(ymin=lower, ymax=upper,
+                                    fill=as.factor(rev(lower))), xmin=-180, xmax=180, alpha=0.5) +
+      coord_cartesian(xlim=c(-180,180), ylim=c(-90,90)) + 
+      scale_x_continuous(breaks=seq(-180,180,20)) + 
+      scale_y_continuous(breaks=seq(-90,90,10)) +
+      theme(axis.line=element_blank(),
+          axis.text.x=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+          legend.position=<span style="color: #EEDC82;">"none"</span>,
+          panel.background=element_blank(),
+          panel.border=element_blank(),
+          panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+          plot.background=element_blank()) +
+      scale_fill_manual(values=colours)
+}
+
+print(main.plot(3:4, c(-90, 0, 90)), vp=viewport(0, 1, 1, 0.333, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+print(main.plot(5:7, c(-90, 0, 90)), vp=viewport(0, 0.66667, 1, 0.333, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+print(main.plot(8:15, c(-90, 0, 90)), vp=viewport(0, 0.333, 1, 0.333, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+print(leg.plot(3:4, c(-90, 0, 90)), vp=viewport(0.06, 1-0.01, 0.3, 0.1, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+print(leg.plot(5:7, c(-90, -24, 24, 90)), vp=viewport(0.06, 0.66667-0.01, 0.3, 0.1, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+print(leg.plot(8:15, c(-90, -64, -44, -24, 0, 24, 44, 64, 90)),
+      vp=viewport(0.06, 0.333-0.01, 0.3, 0.1, just=c(<span style="color: #EEDC82;">"left"</span>, <span style="color: #EEDC82;">"top"</span>)))
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="line-all.png" alt="line-all.png" />
+</p>
+</div>
+
+<p>
+Great. In the above plots we can easily see the average temperature
+difference for varying latitude ranges. I have also put the global
+average in black. I have put this value in black, and a slightly
+heavier weight to have it stand out and appear separate from the other
+data, but also used a dashed line so that it doesn't dominate the
+plots.
+</p>
+
+<p>
+These plots help us to easily see some of the trends within the
+data. For example, we can see that northern regions have had the
+greatest increase in average temperature accross the globe, and that
+the average temperature around the poles tends to vary a lot more than
+around the equator.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ashley Gillman</p>
+<p class="date">Created: 2015-08-03 Mon 01:36</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.50.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
