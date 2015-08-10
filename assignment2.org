@@ -512,7 +512,7 @@ edge-betweenness algorithm.
 It is obvious from the plot that there is no particular increase in
 interactivity within the communities. Therefore, this data would seem
 to indicate that dolphins tend not to form communities, and rather
-tend to interact indiscriminantly accross the wider group.
+tend to interact indiscriminately across the wider group.
 
 * Footnotes
 
