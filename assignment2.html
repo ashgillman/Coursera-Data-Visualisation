@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Data Visualisation Assignment 2</title>
-<!-- 2015-08-10 Mon 12:36 -->
+<!-- 2015-08-10 Mon 12:47 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Ashley Gillman" />
@@ -144,7 +144,7 @@ for the JavaScript code in this tag.
 <h2 id="sec-1"><span class="section-number-2">1</span> The Dataset</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-The data used in this assignment represents social interractions
+The data used in this assignment represents social interactions
 between 62 dolphins <sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>. We will explore these interactions
 and investiate whether dolphins form social sub-groups.
 </p>
@@ -239,7 +239,7 @@ plot_data <span style="color: #FF80F4;">&lt;-</span> edge_list %&gt;% mutate(
 <div class="outline-text-2" id="text-5">
 <p>
 An adjacency matrix was selected as it provides a neat and convenient
-method for anaylysing graph interactions. In this plot, both the x and
+method for analysing graph interactions. In this plot, both the x and
 y axes reprisent individual nodes, in this case dolphins. Points
 represent an interaction between two dolphins. Grey points represent
 interactions between dolphins of different communities, whereas
@@ -259,6 +259,7 @@ ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
       <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">make sure that ggplot does not drop unused factor levels</span>
       scale_x_discrete(drop = <span style="color: #66D9EF;">FALSE</span>) +
       scale_y_discrete(drop = <span style="color: #66D9EF;">FALSE</span>) +
+      ggtitle(<span style="color: #EEDC82;">'Dolphin Social Interactions'</span>) +
       theme(
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
@@ -320,6 +321,9 @@ We now have an effective method to quickly analyse interactions
 within and between communities. The Adjacency matrix here maps
 both distance and hue to node community. The interactions between and
 within communities are visualised using density.
+Note that the lack of legend for the colour was a deliberate decision,
+as the communities were arbitrarily determined using an
+edge-betweenness algorithm.
 </p>
 
 <p>
@@ -353,7 +357,7 @@ ggplot2." Matthew Lincoln (blog), 20 Dec 2014,
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Ashley Gillman</p>
-<p class="date">Created: 2015-08-10 Mon 12:36</p>
+<p class="date">Created: 2015-08-10 Mon 12:47</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.50.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

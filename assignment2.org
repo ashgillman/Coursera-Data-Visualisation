@@ -37,7 +37,7 @@ And export to html using org-style.css for formatting.
 #+end_src
 * The Dataset
 
-The data used in this assignment represents social interractions
+The data used in this assignment represents social interactions
 between 62 dolphins [fn:dolphins]. We will explore these interactions
 and investiate whether dolphins form social sub-groups.
 
@@ -418,7 +418,7 @@ plot_data <- edge_list %>% mutate(
 * Generating the Adjacency Matrix
 
 An adjacency matrix was selected as it provides a neat and convenient
-method for anaylysing graph interactions. In this plot, both the x and
+method for analysing graph interactions. In this plot, both the x and
 y axes reprisent individual nodes, in this case dolphins. Points
 represent an interaction between two dolphins. Grey points represent
 interactions between dolphins of different communities, whereas
@@ -436,6 +436,7 @@ ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
       # make sure that ggplot does not drop unused factor levels
       scale_x_discrete(drop = FALSE) +
       scale_y_discrete(drop = FALSE) +
+      ggtitle('Dolphin Social Interactions') +
       theme(
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
@@ -483,6 +484,7 @@ ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
       # make sure that ggplot does not drop unused factor levels
       scale_x_discrete(drop = FALSE) +
       scale_y_discrete(drop = FALSE) +
+      ggtitle('Dolphin Social Interactions') +
       theme(
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
@@ -503,6 +505,9 @@ We now have an effective method to quickly analyse interactions
 within and between communities. The Adjacency matrix here maps
 both distance and hue to node community. The interactions between and
 within communities are visualised using density.
+Note that the lack of legend for the colour was a deliberate decision,
+as the communities were arbitrarily determined using an
+edge-betweenness algorithm.
 
 It is obvious from the plot that there is no particular increase in
 interactivity within the communities. Therefore, this data would seem
