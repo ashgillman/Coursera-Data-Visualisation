@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Data Visualisation Assignment 2</title>
+<!-- 2015-08-10 Mon 12:36 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Ashley Gillman" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="./org-style.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Data Visualisation Assignment 2</h1>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> The Dataset</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The data used in this assignment represents social interractions
+between 62 dolphins <sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>. We will explore these interactions
+and investiate whether dolphins form social sub-groups.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Dependencies</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+This investigation will be done using R, and the <code>igraph</code>, <code>dplyr</code> and
+<code>ggplot2</code> packages. The <code>igraph</code> package allows manipulation of graph
+data, <code>dplyr</code> allows general data wrangling, and ggplot2 allows us to
+produce flexible plots.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">install.packages(c(<span style="color: #EEDC82;">'igraph'</span>, <span style="color: #EEDC82;">'dplyr'</span>, <span style="color: #EEDC82;">'ggplot2'</span>),
+                 repos=<span style="color: #EEDC82;">"http://cran.r-project.org"</span>,
+                 Ncpus=4)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Loading and Generating the Data</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Having downloaded the dolphin data in <code>.gml</code> format, the next step was
+to load in the data. I also simplified the data, which removed loops
+and parallel connections between nodes in order to ensure we have
+clean data, and turned it into a directed graph. This made each mutual
+interaction represented as two independent directed reactions, making
+the adjacency matrix to be created later symmetrical.
+</p>
+
+<p>
+I also evaluated the communities within dolphins' social
+interractions, using <code>igraph</code>'s <code>edge.betweenness</code> algorithm.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #FF80F4;">library</span>(igraph)
+dolphins <span style="color: #FF80F4;">&lt;-</span> read.graph(<span style="color: #EEDC82;">'./dolphins.gml'</span>, <span style="color: #EEDC82;">'gml'</span>)
+
+dolphins <span style="color: #FF80F4;">&lt;-</span> as.directed(simplify(dolphins))
+V(dolphins)$comm <span style="color: #FF80F4;">&lt;-</span> membership(edge.betweenness.community(dolphins))
+<span style="color: #8C8C8C;">#</span><span style="color: #8C8C8C;">V(dolphins)$comm &lt;- membership(optimal.community(dolphins))</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Wrangling the Data</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The following data wrangling is based heavily on the work of Matthew
+Lincoln<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>. The <code>plot_data</code> is formed in order to provide
+the data in a format appropriate for <code>ggplot2</code> to form into an
+adjacency matrix.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #FF80F4;">library</span>(dplyr)
+
+node_list <span style="color: #FF80F4;">&lt;-</span> get.data.frame(dolphins, what=<span style="color: #EEDC82;">"vertices"</span>)
+edge_list <span style="color: #FF80F4;">&lt;-</span> get.data.frame(dolphins, what=<span style="color: #EEDC82;">"edges"</span>) %&gt;%
+  inner_join(node_list %&gt;% select(id, comm, label), by=c(<span style="color: #EEDC82;">"from"</span>=<span style="color: #EEDC82;">"id"</span>)) %&gt;%
+  inner_join(node_list %&gt;% select(id, comm, label), by=c(<span style="color: #EEDC82;">"to"</span>=<span style="color: #EEDC82;">"id"</span>)) %&gt;%
+  mutate(group=ifelse(comm.x == comm.y, comm.x, <span style="color: #66D9EF;">NA</span>) %&gt;% factor())
+
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Create a character vector containing every node label</span>
+all_nodes <span style="color: #FF80F4;">&lt;-</span> sort(node_list$id)
+
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Adjust the 'to' and 'from' factor levels so they are equal</span>
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">to this complete list of node ids</span>
+plot_data <span style="color: #FF80F4;">&lt;-</span> edge_list %&gt;% mutate(
+        to = factor(to, levels = all_nodes),
+        from = factor(from, levels = all_nodes))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Generating the Adjacency Matrix</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+An adjacency matrix was selected as it provides a neat and convenient
+method for anaylysing graph interactions. In this plot, both the x and
+y axes reprisent individual nodes, in this case dolphins. Points
+represent an interaction between two dolphins. Grey points represent
+interactions between dolphins of different communities, whereas
+coloured dots represent interactions within the various, arbitrary
+communities discovered by <code>igraph</code>'s <code>edge.betweenness</code>.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #FF80F4;">library</span>(ggplot2)
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Create the adjacency matrix plot</span>
+ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
+      geom_raster() +
+      theme_bw() +
+      <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Because we need the x and y axis to display every node,</span>
+      <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">not just the nodes that have connections to each other,</span>
+      <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">make sure that ggplot does not drop unused factor levels</span>
+      scale_x_discrete(drop = <span style="color: #66D9EF;">FALSE</span>) +
+      scale_y_discrete(drop = <span style="color: #66D9EF;">FALSE</span>) +
+      theme(
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.x = element_text(angle = 270, hjust = 0),
+        <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Force the plot into a square aspect ratio</span>
+        aspect.ratio = 1,
+        <span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Hide the legend (optional)</span>
+        legend.position = <span style="color: #EEDC82;">"none"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="assignment2-unsorted-adjacency.png" alt="assignment2-unsorted-adjacency.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Ordering Nodes by Community</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+The plot above is technically correct, however does not reveal much to
+the observer. By arranging the nodes by community first, rather than
+by name, communities become easier to distinguish. Doing so
+effectively assigns community to the distance metric on the plot.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Create a character vector of node names sorted by their</span>
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">community membership. Here, I rearrange the node_list</span>
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">table by the "comm" variable, then extract the</span>
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">"name" vector</span>
+name_order <span style="color: #FF80F4;">&lt;-</span> (node_list %&gt;% arrange(comm))$label
+
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">Reorder edge_list "from" and "to" factor levels based on</span>
+<span style="color: #8C8C8C;"># </span><span style="color: #8C8C8C;">this new name_order</span>
+plot_data <span style="color: #FF80F4;">&lt;-</span> edge_list %&gt;% mutate(
+        label.x = factor(label.x, levels = name_order),
+        label.y = factor(label.y, levels = name_order))
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="assignment2-sorted-adjacency.png" alt="assignment2-sorted-adjacency.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Observations</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+We now have an effective method to quickly analyse interactions
+within and between communities. The Adjacency matrix here maps
+both distance and hue to node community. The interactions between and
+within communities are visualised using density.
+</p>
+
+<p>
+It is obvious from the plot that there is no particular increase in
+interactivity within the communities. Therefore, this data would seem
+to indicate that dolphins tend not to form communities, and rather
+tend to interact indiscriminantly accross the wider group.
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+D. Lusseau, K. Schneider, O. J. Boisseau, P. Haase,
+E. Slooten, and S. M. Dawson, "The bottlenose dolphin community of
+Doubtful Sound features a large proportion of long-lasting
+associations" Behavioral Ecology and Sociobiology 54, 396-405 (2003).
+Available: <a href="https://networkdata.ics.uci.edu/data.php?id=6">https://networkdata.ics.uci.edu/data.php?id=6</a>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+Lincoln, Matthew D. "Adjacency matrix plots with R and
+ggplot2." Matthew Lincoln (blog), 20 Dec 2014,
+<a href="http://matthewlincoln.net/2014/12/20/adjacency-matrix-plots-with-r-and-ggplot2.html.">http://matthewlincoln.net/2014/12/20/adjacency-matrix-plots-with-r-and-ggplot2.html.</a>
+</p></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Ashley Gillman</p>
+<p class="date">Created: 2015-08-10 Mon 12:36</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.50.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

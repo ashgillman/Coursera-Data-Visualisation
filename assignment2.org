@@ -1,0 +1,522 @@
+#+TITLE: Data Visualisation Assignment 2
+#+AUTHOR: Ashley Gillman
+#+EMAIL: ashley.gillman@my.jcu.edu.au
+#+OPTIONS: toc:nil
+#+PROPERTY: header-args:R :session *R* :exports both :width 720 :height 720
+# ^ Note: you need to run this line with C-c C-c
+
+# https://github.com/fniessen/org-html-themes
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./org-style.css"/>
+
+* Setup                                                            :noexport:
+
+Set up R and LaTeX.
+
+#+begin_src emacs-lisp :results silent
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)
+     (latex . t)))
+#+end_src
+
+Also allow evaluation without asking, and plot graphs.
+
+#+begin_src emacs-lisp :results silent
+  (setq org-confirm-babel-evaluate nil)
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+  (add-hook 'org-mode-hook 'org-display-inline-images)
+#+end_src
+
+And export to html using org-style.css for formatting.
+
+#+begin_src emacs-lisp :results silent
+ (setq org-export-html-style-include-scripts nil
+       org-export-html-style-include-default nil)
+ (setq org-export-html-style
+       "<link rel=\"stylesheet\" type=\"text/css\" href=\"org-style.css\" />")
+#+end_src
+* The Dataset
+
+The data used in this assignment represents social interractions
+between 62 dolphins [fn:dolphins]. We will explore these interactions
+and investiate whether dolphins form social sub-groups.
+
+* Dependencies
+
+This investigation will be done using R, and the =igraph=, =dplyr= and
+=ggplot2= packages. The =igraph= package allows manipulation of graph
+data, =dplyr= allows general data wrangling, and ggplot2 allows us to
+produce flexible plots.
+
+#+begin_src R :exports code :session none
+install.packages(c('igraph', 'dplyr', 'ggplot2'),
+                 repos="http://cran.r-project.org",
+                 Ncpus=4)
+#+end_src
+
+* Loading and Generating the Data
+
+Having downloaded the dolphin data in =.gml= format, the next step was
+to load in the data. I also simplified the data, which removed loops
+and parallel connections between nodes in order to ensure we have
+clean data, and turned it into a directed graph. This made each mutual
+interaction represented as two independent directed reactions, making
+the adjacency matrix to be created later symmetrical.
+
+I also evaluated the communities within dolphins' social
+interractions, using =igraph='s =edge.betweenness= algorithm.
+
+#+begin_src R :exports code
+library(igraph)
+dolphins <- read.graph('./dolphins.gml', 'gml')
+
+dolphins <- as.directed(simplify(dolphins))
+V(dolphins)$comm <- membership(edge.betweenness.community(dolphins))
+#V(dolphins)$comm <- membership(optimal.community(dolphins))
+#+end_src
+
+* Wrangling the Data
+
+The following data wrangling is based heavily on the work of Matthew
+Lincoln[fn:adjacency]. The =plot_data= is formed in order to provide
+the data in a format appropriate for =ggplot2= to form into an
+adjacency matrix.
+
+#+begin_src R :exports code
+library(dplyr)
+
+node_list <- get.data.frame(dolphins, what="vertices")
+edge_list <- get.data.frame(dolphins, what="edges") %>%
+  inner_join(node_list %>% select(id, comm, label), by=c("from"="id")) %>%
+  inner_join(node_list %>% select(id, comm, label), by=c("to"="id")) %>%
+  mutate(group=ifelse(comm.x == comm.y, comm.x, NA) %>% factor())
+
+# Create a character vector containing every node label
+all_nodes <- sort(node_list$id)
+
+# Adjust the 'to' and 'from' factor levels so they are equal
+# to this complete list of node ids
+plot_data <- edge_list %>% mutate(
+        to = factor(to, levels = all_nodes),
+        from = factor(from, levels = all_nodes))
+#+end_src
+
+#+RESULTS:
+|  1 | 11 | 2 | Beescratch  | 4 | Five        | nil |
+|  1 | 15 | 2 | Beescratch  | 4 | Haecksel    | nil |
+|  1 | 16 | 2 | Beescratch  | 5 | Hook        | nil |
+|  1 | 41 | 2 | Beescratch  | 2 | SN90        | 2   |
+|  1 | 43 | 2 | Beescratch  | 5 | Stripes     | nil |
+|  1 | 48 | 2 | Beescratch  | 2 | TR82        | 2   |
+|  2 | 18 | 1 | Bumper      | 4 | Jonah       | nil |
+|  2 | 20 | 1 | Bumper      | 1 | Kringel     | 1   |
+|  2 | 27 | 1 | Bumper      | 2 | Number1     | nil |
+|  2 | 28 | 1 | Bumper      | 1 | Oscar       | 1   |
+|  2 | 29 | 1 | Bumper      | 4 | Patchback   | nil |
+|  2 | 37 | 1 | Bumper      | 5 | SN4         | nil |
+|  2 | 42 | 1 | Bumper      | 1 | SN96        | 1   |
+|  2 | 55 | 1 | Bumper      | 4 | Vau         | nil |
+|  3 | 11 | 3 | CCL         | 4 | Five        | nil |
+|  3 | 43 | 3 | CCL         | 5 | Stripes     | nil |
+|  3 | 45 | 3 | CCL         | 4 | Topless     | nil |
+|  4 |  9 | 4 | Cross       | 2 | Feather     | nil |
+|  4 | 15 | 4 | Cross       | 4 | Haecksel    | 4   |
+|  4 | 60 | 4 | Cross       | 2 | Zig         | nil |
+|  5 | 52 | 2 | DN16        | 5 | TSN103      | nil |
+|  6 | 10 | 2 | DN21        | 1 | Fish        | nil |
+|  6 | 14 | 2 | DN21        | 5 | Grin        | nil |
+|  6 | 57 | 2 | DN21        | 2 | Web         | 2   |
+|  6 | 58 | 2 | DN21        | 5 | Whitetip    | nil |
+|  7 | 10 | 2 | DN63        | 1 | Fish        | nil |
+|  7 | 14 | 2 | DN63        | 5 | Grin        | nil |
+|  7 | 18 | 2 | DN63        | 4 | Jonah       | nil |
+|  7 | 55 | 2 | DN63        | 4 | Vau         | nil |
+|  7 | 57 | 2 | DN63        | 2 | Web         | 2   |
+|  7 | 58 | 2 | DN63        | 5 | Whitetip    | nil |
+|  8 | 20 | 3 | Double      | 1 | Kringel     | nil |
+|  8 | 28 | 3 | Double      | 1 | Oscar       | nil |
+|  8 | 31 | 3 | Double      | 2 | Quasi       | nil |
+|  8 | 41 | 3 | Double      | 2 | SN90        | nil |
+|  8 | 55 | 3 | Double      | 4 | Vau         | nil |
+|  9 | 21 | 2 | Feather     | 4 | MN105       | nil |
+|  9 | 29 | 2 | Feather     | 4 | Patchback   | nil |
+|  9 | 38 | 2 | Feather     | 5 | SN63        | nil |
+|  9 | 46 | 2 | Feather     | 5 | TR120       | nil |
+|  9 | 60 | 2 | Feather     | 2 | Zig         | 2   |
+| 10 | 14 | 1 | Fish        | 5 | Grin        | nil |
+| 10 | 18 | 1 | Fish        | 4 | Jonah       | nil |
+| 10 | 33 | 1 | Fish        | 5 | Scabs       | nil |
+| 10 | 42 | 1 | Fish        | 1 | SN96        | 1   |
+| 10 | 58 | 1 | Fish        | 5 | Whitetip    | nil |
+| 11 | 30 | 4 | Five        | 1 | PL          | nil |
+| 11 | 43 | 4 | Five        | 5 | Stripes     | nil |
+| 11 | 48 | 4 | Five        | 2 | TR82        | nil |
+| 12 | 52 | 5 | Fork        | 5 | TSN103      | 5   |
+| 13 | 34 | 2 | Gallatin    | 5 | Shmuddel    | nil |
+| 14 | 18 | 5 | Grin        | 4 | Jonah       | nil |
+| 14 | 33 | 5 | Grin        | 5 | Scabs       | 5   |
+| 14 | 42 | 5 | Grin        | 1 | SN96        | nil |
+| 14 | 55 | 5 | Grin        | 4 | Vau         | nil |
+| 14 | 58 | 5 | Grin        | 5 | Whitetip    | 5   |
+| 15 | 17 | 4 | Haecksel    | 2 | Jet         | nil |
+| 15 | 25 | 4 | Haecksel    | 2 | Mus         | nil |
+| 15 | 34 | 4 | Haecksel    | 5 | Shmuddel    | nil |
+| 15 | 35 | 4 | Haecksel    | 4 | SMN5        | 4   |
+| 15 | 38 | 4 | Haecksel    | 5 | SN63        | nil |
+| 15 | 39 | 4 | Haecksel    | 3 | SN89        | nil |
+| 15 | 41 | 4 | Haecksel    | 2 | SN90        | nil |
+| 15 | 44 | 4 | Haecksel    | 1 | Thumper     | nil |
+| 15 | 51 | 4 | Haecksel    | 4 | Trigger     | 4   |
+| 15 | 53 | 4 | Haecksel    | 5 | TSN83       | nil |
+| 16 | 19 | 5 | Hook        | 2 | Knit        | nil |
+| 16 | 25 | 5 | Hook        | 2 | Mus         | nil |
+| 16 | 41 | 5 | Hook        | 2 | SN90        | nil |
+| 16 | 46 | 5 | Hook        | 5 | TR120       | 5   |
+| 16 | 56 | 5 | Hook        | 2 | Wave        | nil |
+| 16 | 60 | 5 | Hook        | 2 | Zig         | nil |
+| 17 | 21 | 2 | Jet         | 4 | MN105       | nil |
+| 17 | 34 | 2 | Jet         | 5 | Shmuddel    | nil |
+| 17 | 38 | 2 | Jet         | 5 | SN63        | nil |
+| 17 | 39 | 2 | Jet         | 3 | SN89        | nil |
+| 17 | 51 | 2 | Jet         | 4 | Trigger     | nil |
+| 18 | 23 | 4 | Jonah       | 4 | MN60        | 4   |
+| 18 | 26 | 4 | Jonah       | 2 | Notch       | nil |
+| 18 | 28 | 4 | Jonah       | 1 | Oscar       | nil |
+| 18 | 32 | 4 | Jonah       | 2 | Ripplefluke | nil |
+| 18 | 58 | 4 | Jonah       | 5 | Whitetip    | nil |
+| 19 | 21 | 2 | Knit        | 4 | MN105       | nil |
+| 19 | 22 | 2 | Knit        | 2 | MN23        | 2   |
+| 19 | 25 | 2 | Knit        | 2 | Mus         | 2   |
+| 19 | 30 | 2 | Knit        | 1 | PL          | nil |
+| 19 | 46 | 2 | Knit        | 5 | TR120       | nil |
+| 19 | 52 | 2 | Knit        | 5 | TSN103      | nil |
+| 20 | 31 | 1 | Kringel     | 2 | Quasi       | nil |
+| 20 | 55 | 1 | Kringel     | 4 | Vau         | nil |
+| 21 | 29 | 4 | MN105       | 4 | Patchback   | 4   |
+| 21 | 37 | 4 | MN105       | 5 | SN4         | nil |
+| 21 | 39 | 4 | MN105       | 3 | SN89        | nil |
+| 21 | 45 | 4 | MN105       | 4 | Topless     | 4   |
+| 21 | 48 | 4 | MN105       | 2 | TR82        | nil |
+| 21 | 51 | 4 | MN105       | 4 | Trigger     | 4   |
+| 22 | 30 | 2 | MN23        | 1 | PL          | nil |
+| 22 | 34 | 2 | MN23        | 5 | Shmuddel    | nil |
+| 22 | 38 | 2 | MN23        | 5 | SN63        | nil |
+| 22 | 46 | 2 | MN23        | 5 | TR120       | nil |
+| 22 | 52 | 2 | MN23        | 5 | TSN103      | nil |
+| 24 | 37 | 4 | MN83        | 5 | SN4         | nil |
+| 24 | 46 | 4 | MN83        | 5 | TR120       | nil |
+| 24 | 52 | 4 | MN83        | 5 | TSN103      | nil |
+| 25 | 30 | 2 | Mus         | 1 | PL          | nil |
+| 25 | 46 | 2 | Mus         | 5 | TR120       | nil |
+| 25 | 52 | 2 | Mus         | 5 | TSN103      | nil |
+| 26 | 27 | 2 | Notch       | 2 | Number1     | 2   |
+| 26 | 28 | 2 | Notch       | 1 | Oscar       | nil |
+| 27 | 28 | 2 | Number1     | 1 | Oscar       | nil |
+| 29 | 31 | 4 | Patchback   | 2 | Quasi       | nil |
+| 29 | 48 | 4 | Patchback   | 2 | TR82        | nil |
+| 30 | 36 | 1 | PL          | 3 | SN100       | nil |
+| 30 | 44 | 1 | PL          | 1 | Thumper     | 1   |
+| 30 | 46 | 1 | PL          | 5 | TR120       | nil |
+| 30 | 52 | 1 | PL          | 5 | TSN103      | nil |
+| 30 | 53 | 1 | PL          | 5 | TSN83       | nil |
+| 31 | 43 | 2 | Quasi       | 5 | Stripes     | nil |
+| 31 | 48 | 2 | Quasi       | 2 | TR82        | 2   |
+| 33 | 61 | 5 | Scabs       | 5 | Zipfel      | 5   |
+| 34 | 35 | 5 | Shmuddel    | 4 | SMN5        | nil |
+| 34 | 38 | 5 | Shmuddel    | 5 | SN63        | 5   |
+| 34 | 39 | 5 | Shmuddel    | 3 | SN89        | nil |
+| 34 | 41 | 5 | Shmuddel    | 2 | SN90        | nil |
+| 34 | 44 | 5 | Shmuddel    | 1 | Thumper     | nil |
+| 34 | 51 | 5 | Shmuddel    | 4 | Trigger     | nil |
+| 35 | 38 | 4 | SMN5        | 5 | SN63        | nil |
+| 35 | 45 | 4 | SMN5        | 4 | Topless     | 4   |
+| 35 | 50 | 4 | SMN5        | 5 | TR99        | nil |
+| 37 | 38 | 5 | SN4         | 5 | SN63        | 5   |
+| 37 | 40 | 5 | SN4         | 5 | SN9         | 5   |
+| 37 | 41 | 5 | SN4         | 2 | SN90        | nil |
+| 37 | 60 | 5 | SN4         | 2 | Zig         | nil |
+| 38 | 41 | 5 | SN63        | 2 | SN90        | nil |
+| 38 | 44 | 5 | SN63        | 1 | Thumper     | nil |
+| 38 | 46 | 5 | SN63        | 5 | TR120       | 5   |
+| 39 | 44 | 3 | SN89        | 1 | Thumper     | nil |
+| 39 | 45 | 3 | SN89        | 4 | Topless     | nil |
+| 39 | 53 | 3 | SN89        | 5 | TSN83       | nil |
+| 39 | 59 | 3 | SN89        | 3 | Zap         | 3   |
+| 40 | 58 | 5 | SN9         | 5 | Whitetip    | 5   |
+| 41 | 53 | 2 | SN90        | 5 | TSN83       | nil |
+| 42 | 55 | 1 | SN96        | 4 | Vau         | nil |
+| 42 | 58 | 1 | SN96        | 5 | Whitetip    | nil |
+| 43 | 48 | 5 | Stripes     | 2 | TR82        | nil |
+| 43 | 51 | 5 | Stripes     | 4 | Trigger     | nil |
+| 44 | 47 | 1 | Thumper     | 1 | TR77        | 1   |
+| 44 | 54 | 1 | Thumper     | 2 | Upbang      | nil |
+| 46 | 51 | 5 | TR120       | 4 | Trigger     | nil |
+| 46 | 52 | 5 | TR120       | 5 | TSN103      | 5   |
+| 46 | 60 | 5 | TR120       | 2 | Zig         | nil |
+| 47 | 50 | 1 | TR77        | 5 | TR99        | nil |
+| 49 | 58 | 5 | TR88        | 5 | Whitetip    | 5   |
+| 51 | 52 | 4 | Trigger     | 5 | TSN103      | nil |
+| 52 | 56 | 5 | TSN103      | 2 | Wave        | nil |
+| 55 | 58 | 4 | Vau         | 5 | Whitetip    | nil |
+| 11 |  1 | 4 | Five        | 2 | Beescratch  | nil |
+| 15 |  1 | 4 | Haecksel    | 2 | Beescratch  | nil |
+| 16 |  1 | 5 | Hook        | 2 | Beescratch  | nil |
+| 41 |  1 | 2 | SN90        | 2 | Beescratch  | 2   |
+| 43 |  1 | 5 | Stripes     | 2 | Beescratch  | nil |
+| 48 |  1 | 2 | TR82        | 2 | Beescratch  | 2   |
+| 18 |  2 | 4 | Jonah       | 1 | Bumper      | nil |
+| 20 |  2 | 1 | Kringel     | 1 | Bumper      | 1   |
+| 27 |  2 | 2 | Number1     | 1 | Bumper      | nil |
+| 28 |  2 | 1 | Oscar       | 1 | Bumper      | 1   |
+| 29 |  2 | 4 | Patchback   | 1 | Bumper      | nil |
+| 37 |  2 | 5 | SN4         | 1 | Bumper      | nil |
+| 42 |  2 | 1 | SN96        | 1 | Bumper      | 1   |
+| 55 |  2 | 4 | Vau         | 1 | Bumper      | nil |
+| 11 |  3 | 4 | Five        | 3 | CCL         | nil |
+| 43 |  3 | 5 | Stripes     | 3 | CCL         | nil |
+| 45 |  3 | 4 | Topless     | 3 | CCL         | nil |
+|  9 |  4 | 2 | Feather     | 4 | Cross       | nil |
+| 15 |  4 | 4 | Haecksel    | 4 | Cross       | 4   |
+| 60 |  4 | 2 | Zig         | 4 | Cross       | nil |
+| 52 |  5 | 5 | TSN103      | 2 | DN16        | nil |
+| 10 |  6 | 1 | Fish        | 2 | DN21        | nil |
+| 14 |  6 | 5 | Grin        | 2 | DN21        | nil |
+| 57 |  6 | 2 | Web         | 2 | DN21        | 2   |
+| 58 |  6 | 5 | Whitetip    | 2 | DN21        | nil |
+| 10 |  7 | 1 | Fish        | 2 | DN63        | nil |
+| 14 |  7 | 5 | Grin        | 2 | DN63        | nil |
+| 18 |  7 | 4 | Jonah       | 2 | DN63        | nil |
+| 55 |  7 | 4 | Vau         | 2 | DN63        | nil |
+| 57 |  7 | 2 | Web         | 2 | DN63        | 2   |
+| 58 |  7 | 5 | Whitetip    | 2 | DN63        | nil |
+| 20 |  8 | 1 | Kringel     | 3 | Double      | nil |
+| 28 |  8 | 1 | Oscar       | 3 | Double      | nil |
+| 31 |  8 | 2 | Quasi       | 3 | Double      | nil |
+| 41 |  8 | 2 | SN90        | 3 | Double      | nil |
+| 55 |  8 | 4 | Vau         | 3 | Double      | nil |
+| 21 |  9 | 4 | MN105       | 2 | Feather     | nil |
+| 29 |  9 | 4 | Patchback   | 2 | Feather     | nil |
+| 38 |  9 | 5 | SN63        | 2 | Feather     | nil |
+| 46 |  9 | 5 | TR120       | 2 | Feather     | nil |
+| 60 |  9 | 2 | Zig         | 2 | Feather     | 2   |
+| 14 | 10 | 5 | Grin        | 1 | Fish        | nil |
+| 18 | 10 | 4 | Jonah       | 1 | Fish        | nil |
+| 33 | 10 | 5 | Scabs       | 1 | Fish        | nil |
+| 42 | 10 | 1 | SN96        | 1 | Fish        | 1   |
+| 58 | 10 | 5 | Whitetip    | 1 | Fish        | nil |
+| 30 | 11 | 1 | PL          | 4 | Five        | nil |
+| 43 | 11 | 5 | Stripes     | 4 | Five        | nil |
+| 48 | 11 | 2 | TR82        | 4 | Five        | nil |
+| 52 | 12 | 5 | TSN103      | 5 | Fork        | 5   |
+| 34 | 13 | 5 | Shmuddel    | 2 | Gallatin    | nil |
+| 18 | 14 | 4 | Jonah       | 5 | Grin        | nil |
+| 33 | 14 | 5 | Scabs       | 5 | Grin        | 5   |
+| 42 | 14 | 1 | SN96        | 5 | Grin        | nil |
+| 55 | 14 | 4 | Vau         | 5 | Grin        | nil |
+| 58 | 14 | 5 | Whitetip    | 5 | Grin        | 5   |
+| 17 | 15 | 2 | Jet         | 4 | Haecksel    | nil |
+| 25 | 15 | 2 | Mus         | 4 | Haecksel    | nil |
+| 34 | 15 | 5 | Shmuddel    | 4 | Haecksel    | nil |
+| 35 | 15 | 4 | SMN5        | 4 | Haecksel    | 4   |
+| 38 | 15 | 5 | SN63        | 4 | Haecksel    | nil |
+| 39 | 15 | 3 | SN89        | 4 | Haecksel    | nil |
+| 41 | 15 | 2 | SN90        | 4 | Haecksel    | nil |
+| 44 | 15 | 1 | Thumper     | 4 | Haecksel    | nil |
+| 51 | 15 | 4 | Trigger     | 4 | Haecksel    | 4   |
+| 53 | 15 | 5 | TSN83       | 4 | Haecksel    | nil |
+| 19 | 16 | 2 | Knit        | 5 | Hook        | nil |
+| 25 | 16 | 2 | Mus         | 5 | Hook        | nil |
+| 41 | 16 | 2 | SN90        | 5 | Hook        | nil |
+| 46 | 16 | 5 | TR120       | 5 | Hook        | 5   |
+| 56 | 16 | 2 | Wave        | 5 | Hook        | nil |
+| 60 | 16 | 2 | Zig         | 5 | Hook        | nil |
+| 21 | 17 | 4 | MN105       | 2 | Jet         | nil |
+| 34 | 17 | 5 | Shmuddel    | 2 | Jet         | nil |
+| 38 | 17 | 5 | SN63        | 2 | Jet         | nil |
+| 39 | 17 | 3 | SN89        | 2 | Jet         | nil |
+| 51 | 17 | 4 | Trigger     | 2 | Jet         | nil |
+| 23 | 18 | 4 | MN60        | 4 | Jonah       | 4   |
+| 26 | 18 | 2 | Notch       | 4 | Jonah       | nil |
+| 28 | 18 | 1 | Oscar       | 4 | Jonah       | nil |
+| 32 | 18 | 2 | Ripplefluke | 4 | Jonah       | nil |
+| 58 | 18 | 5 | Whitetip    | 4 | Jonah       | nil |
+| 21 | 19 | 4 | MN105       | 2 | Knit        | nil |
+| 22 | 19 | 2 | MN23        | 2 | Knit        | 2   |
+| 25 | 19 | 2 | Mus         | 2 | Knit        | 2   |
+| 30 | 19 | 1 | PL          | 2 | Knit        | nil |
+| 46 | 19 | 5 | TR120       | 2 | Knit        | nil |
+| 52 | 19 | 5 | TSN103      | 2 | Knit        | nil |
+| 31 | 20 | 2 | Quasi       | 1 | Kringel     | nil |
+| 55 | 20 | 4 | Vau         | 1 | Kringel     | nil |
+| 29 | 21 | 4 | Patchback   | 4 | MN105       | 4   |
+| 37 | 21 | 5 | SN4         | 4 | MN105       | nil |
+| 39 | 21 | 3 | SN89        | 4 | MN105       | nil |
+| 45 | 21 | 4 | Topless     | 4 | MN105       | 4   |
+| 48 | 21 | 2 | TR82        | 4 | MN105       | nil |
+| 51 | 21 | 4 | Trigger     | 4 | MN105       | 4   |
+| 30 | 22 | 1 | PL          | 2 | MN23        | nil |
+| 34 | 22 | 5 | Shmuddel    | 2 | MN23        | nil |
+| 38 | 22 | 5 | SN63        | 2 | MN23        | nil |
+| 46 | 22 | 5 | TR120       | 2 | MN23        | nil |
+| 52 | 22 | 5 | TSN103      | 2 | MN23        | nil |
+| 37 | 24 | 5 | SN4         | 4 | MN83        | nil |
+| 46 | 24 | 5 | TR120       | 4 | MN83        | nil |
+| 52 | 24 | 5 | TSN103      | 4 | MN83        | nil |
+| 30 | 25 | 1 | PL          | 2 | Mus         | nil |
+| 46 | 25 | 5 | TR120       | 2 | Mus         | nil |
+| 52 | 25 | 5 | TSN103      | 2 | Mus         | nil |
+| 27 | 26 | 2 | Number1     | 2 | Notch       | 2   |
+| 28 | 26 | 1 | Oscar       | 2 | Notch       | nil |
+| 28 | 27 | 1 | Oscar       | 2 | Number1     | nil |
+| 31 | 29 | 2 | Quasi       | 4 | Patchback   | nil |
+| 48 | 29 | 2 | TR82        | 4 | Patchback   | nil |
+| 36 | 30 | 3 | SN100       | 1 | PL          | nil |
+| 44 | 30 | 1 | Thumper     | 1 | PL          | 1   |
+| 46 | 30 | 5 | TR120       | 1 | PL          | nil |
+| 52 | 30 | 5 | TSN103      | 1 | PL          | nil |
+| 53 | 30 | 5 | TSN83       | 1 | PL          | nil |
+| 43 | 31 | 5 | Stripes     | 2 | Quasi       | nil |
+| 48 | 31 | 2 | TR82        | 2 | Quasi       | 2   |
+| 61 | 33 | 5 | Zipfel      | 5 | Scabs       | 5   |
+| 35 | 34 | 4 | SMN5        | 5 | Shmuddel    | nil |
+| 38 | 34 | 5 | SN63        | 5 | Shmuddel    | 5   |
+| 39 | 34 | 3 | SN89        | 5 | Shmuddel    | nil |
+| 41 | 34 | 2 | SN90        | 5 | Shmuddel    | nil |
+| 44 | 34 | 1 | Thumper     | 5 | Shmuddel    | nil |
+| 51 | 34 | 4 | Trigger     | 5 | Shmuddel    | nil |
+| 38 | 35 | 5 | SN63        | 4 | SMN5        | nil |
+| 45 | 35 | 4 | Topless     | 4 | SMN5        | 4   |
+| 50 | 35 | 5 | TR99        | 4 | SMN5        | nil |
+| 38 | 37 | 5 | SN63        | 5 | SN4         | 5   |
+| 40 | 37 | 5 | SN9         | 5 | SN4         | 5   |
+| 41 | 37 | 2 | SN90        | 5 | SN4         | nil |
+| 60 | 37 | 2 | Zig         | 5 | SN4         | nil |
+| 41 | 38 | 2 | SN90        | 5 | SN63        | nil |
+| 44 | 38 | 1 | Thumper     | 5 | SN63        | nil |
+| 46 | 38 | 5 | TR120       | 5 | SN63        | 5   |
+| 44 | 39 | 1 | Thumper     | 3 | SN89        | nil |
+| 45 | 39 | 4 | Topless     | 3 | SN89        | nil |
+| 53 | 39 | 5 | TSN83       | 3 | SN89        | nil |
+| 59 | 39 | 3 | Zap         | 3 | SN89        | 3   |
+| 58 | 40 | 5 | Whitetip    | 5 | SN9         | 5   |
+| 53 | 41 | 5 | TSN83       | 2 | SN90        | nil |
+| 55 | 42 | 4 | Vau         | 1 | SN96        | nil |
+| 58 | 42 | 5 | Whitetip    | 1 | SN96        | nil |
+| 48 | 43 | 2 | TR82        | 5 | Stripes     | nil |
+| 51 | 43 | 4 | Trigger     | 5 | Stripes     | nil |
+| 47 | 44 | 1 | TR77        | 1 | Thumper     | 1   |
+| 54 | 44 | 2 | Upbang      | 1 | Thumper     | nil |
+| 51 | 46 | 4 | Trigger     | 5 | TR120       | nil |
+| 52 | 46 | 5 | TSN103      | 5 | TR120       | 5   |
+| 60 | 46 | 2 | Zig         | 5 | TR120       | nil |
+| 50 | 47 | 5 | TR99        | 1 | TR77        | nil |
+| 58 | 49 | 5 | Whitetip    | 5 | TR88        | 5   |
+| 52 | 51 | 5 | TSN103      | 4 | Trigger     | nil |
+| 56 | 52 | 2 | Wave        | 5 | TSN103      | nil |
+| 58 | 55 | 5 | Whitetip    | 4 | Vau         | nil |
+
+* Generating the Adjacency Matrix
+
+An adjacency matrix was selected as it provides a neat and convenient
+method for anaylysing graph interactions. In this plot, both the x and
+y axes reprisent individual nodes, in this case dolphins. Points
+represent an interaction between two dolphins. Grey points represent
+interactions between dolphins of different communities, whereas
+coloured dots represent interactions within the various, arbitrary
+communities discovered by =igraph='s =edge.betweenness=.
+
+#+begin_src R :results output graphics :file assignment2-unsorted-adjacency.png :bg "transparent"
+library(ggplot2)
+# Create the adjacency matrix plot
+ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
+      geom_raster() +
+      theme_bw() +
+      # Because we need the x and y axis to display every node,
+      # not just the nodes that have connections to each other,
+      # make sure that ggplot does not drop unused factor levels
+      scale_x_discrete(drop = FALSE) +
+      scale_y_discrete(drop = FALSE) +
+      theme(
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.x = element_text(angle = 270, hjust = 0),
+        # Force the plot into a square aspect ratio
+        aspect.ratio = 1,
+        # Hide the legend (optional)
+        legend.position = "none")
+#+end_src
+
+#+RESULTS:
+[[file:assignment2-unsorted-adjacency.png]]
+
+* Ordering Nodes by Community
+
+The plot above is technically correct, however does not reveal much to
+the observer. By arranging the nodes by community first, rather than
+by name, communities become easier to distinguish. Doing so
+effectively assigns community to the distance metric on the plot.
+
+#+begin_src R :results output :exports code
+# Create a character vector of node names sorted by their
+# community membership. Here, I rearrange the node_list
+# table by the "comm" variable, then extract the
+# "name" vector
+name_order <- (node_list %>% arrange(comm))$label
+
+# Reorder edge_list "from" and "to" factor levels based on
+# this new name_order
+plot_data <- edge_list %>% mutate(
+        label.x = factor(label.x, levels = name_order),
+        label.y = factor(label.y, levels = name_order))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results output graphics :file assignment2-sorted-adjacency.png :bg "transparent" :exports results
+library(ggplot2)
+# Create the adjacency matrix plot
+ggplot(plot_data, aes(x = label.x, y = label.y, fill = group)) +
+      geom_raster() +
+      theme_bw() +
+      # Because we need the x and y axis to display every node,
+      # not just the nodes that have connections to each other,
+      # make sure that ggplot does not drop unused factor levels
+      scale_x_discrete(drop = FALSE) +
+      scale_y_discrete(drop = FALSE) +
+      theme(
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        # Rotate the x-axis lables so they are legible
+        axis.text.x = element_text(angle = 270, hjust = 0),
+        # Force the plot into a square aspect ratio
+        aspect.ratio = 1,
+        # Hide the legend (optional)
+        legend.position = "none")
+#+end_src
+
+#+RESULTS:
+[[file:assignment2-sorted-adjacency.png]]
+
+* Observations
+
+We now have an effective method to quickly analyse interactions
+within and between communities. The Adjacency matrix here maps
+both distance and hue to node community. The interactions between and
+within communities are visualised using density.
+
+It is obvious from the plot that there is no particular increase in
+interactivity within the communities. Therefore, this data would seem
+to indicate that dolphins tend not to form communities, and rather
+tend to interact indiscriminantly accross the wider group.
+
+* Footnotes
+
+[fn:adjacency] Lincoln, Matthew D. "Adjacency matrix plots with R and
+ggplot2." Matthew Lincoln (blog), 20 Dec 2014,
+[[http://matthewlincoln.net/2014/12/20/adjacency-matrix-plots-with-r-and-ggplot2.html.]]
+
+[fn:dolphins] D. Lusseau, K. Schneider, O. J. Boisseau, P. Haase,
+E. Slooten, and S. M. Dawson, "The bottlenose dolphin community of
+Doubtful Sound features a large proportion of long-lasting
+associations" Behavioral Ecology and Sociobiology 54, 396-405 (2003).
+Available: [[https://networkdata.ics.uci.edu/data.php?id=6]]
